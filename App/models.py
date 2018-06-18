@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -23,3 +24,24 @@ class User(db.Model):
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+class Grade(db.Model):
+    g_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    g_name = db.Column(db.String(24), nullable=False, unique=True)
+    create_time = db.Column(db.DateTime, default=datetime.now)
+    student = db.relationship('Student', backref='grade', lazy='dynamic')
+
+    def to_dict(self):
+        return {
+            'g_id': self.g_id,
+            'g_name': self.g_name,
+            'create_time': self.create_time.strftime('%Y-%m-%d')
+        }
+
+
+class Student(db.Model):
+    s_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    s_name = db.Column(db.String(24), nullable=False)
+    gender = db.Column(db.Boolean, default=True)
+    grade_id = db.Column(db.Integer, db.ForeignKey('grade.g_id'))

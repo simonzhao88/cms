@@ -1,8 +1,9 @@
-from flask import request, render_template
+from flask import request, render_template, session
 from flask_restful import Resource, reqparse
 
 from App.exts_init import api
 from App.models import User, db
+from utils import status_code
 from . import auth
 
 
@@ -53,14 +54,12 @@ class LoginApi(Resource):
         password = args.get('password')
         u = User.query.filter_by(username=username).first()
         if u and u.verify_password(password):
+            session['u_id'] = u.u_id
             return {
                 'code': 200,
                 'msg': '登陆成功~'
             }
-        return {
-            'code': 400,
-            'msg': '用户名或密码错误~'
-        }
+        return status_code.USER_LOGIN_PASSWORD_ERROE
 
 
 class RegisterApi(Resource):
@@ -77,6 +76,8 @@ class RegisterApi(Resource):
         args = self.reqparse.parse_args()
         username = args.get('username')
         password = args.get('password')
+        if User.query.filter_by(username=username).first():
+            return status_code.USER_REGISTER_EXITS_USER
         u = User(username=username, password=password)
         db.session.add(u)
         db.session.commit()

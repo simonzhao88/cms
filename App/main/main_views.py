@@ -3,6 +3,8 @@ from flask_restful import Resource, reqparse
 
 from App.exts_init import api
 from App.models import Grade, db
+from utils import status_code
+from utils.login_required import login_required
 from . import main
 
 
@@ -72,6 +74,7 @@ def users():
 
 
 @main.route('/adduser/')
+@login_required
 def add_user():
     return render_template('add_edit.html')
 
@@ -98,6 +101,8 @@ class GradeApi(Resource):
     def post(self):
         args = self.reqparse.parse_args()
         g_name = args.get('grade_name')
+        if Grade.query.filter_by(g_name=g_name):
+            return status_code.GRADE_ADD_EXITS_ERROR
         gr = Grade(g_name=g_name)
         db.session.add(gr)
         db.session.commit()

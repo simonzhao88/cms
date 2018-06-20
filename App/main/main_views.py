@@ -2,7 +2,7 @@ from flask import render_template, request
 from flask_restful import Resource, reqparse
 
 from App.exts_init import api
-from App.models import Grade, db
+from App.models import Grade, db, Student
 from utils import status_code
 from utils.login_required import login_required
 from . import main
@@ -101,7 +101,7 @@ class GradeApi(Resource):
     def post(self):
         args = self.reqparse.parse_args()
         g_name = args.get('grade_name')
-        if Grade.query.filter_by(g_name=g_name):
+        if Grade.query.filter_by(g_name=g_name).first():
             return status_code.GRADE_ADD_EXITS_ERROR
         gr = Grade(g_name=g_name)
         db.session.add(gr)
@@ -126,15 +126,36 @@ class StudentApi(Resource):
                                    help='请输入正确的学生名~')
         self.reqparse.add_argument('gender', type=bool, required=True,
                                    help='请输入正确的性别~')
-        self.reqparse.add_argument('grade_id', type=int, required=True,
+        self.reqparse.add_argument('grade', type=int, required=True,
                                    help='请输入正确的班级名~')
 
     def get(self):
-        pass
+        students = Student.query.all()
+        return {
+            'code': 200,
+            'msg': '查询成功~',
+            'students': [student.to_dict() for student in students]
+        }
 
     def post(self):
         args = self.reqparse.parse_args()
-        pass
+        s_name = args.get('s_name')
+        gender = args.get('gender')
+        grade_id = args.get('grade')
+        stu = Student()
+        stu.s_name = s_name
+        stu.gender = gender
+        stu.grade_id = grade_id
+        try:
+            db.session.add(stu)
+            db.session.commit()
+        except Exception as e:
+            return status_code.DATABASE_ERROR
+        return {
+            'code': status_code.OK,
+            'msg': '添加学生信息成功~',
+            'stu': stu.to_dict()
+        }
 
     def delete(self):
         pass

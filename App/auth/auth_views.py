@@ -1,4 +1,4 @@
-from flask import request, render_template, session
+from flask import request, render_template, session, jsonify
 from flask_restful import Resource, reqparse
 
 from App.exts_init import api

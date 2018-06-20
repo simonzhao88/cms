@@ -13,6 +13,7 @@ class User(db.Model):
     email = db.Column(db.String(24))
     avatar = db.Column(db.String(168), default='/static/img/icons/avatar.png')
     phone = db.Column(db.String(15))
+    role_id = db.Column(db.Integer, db.ForeignKey('role.r_id'))
 
     @property
     def password(self):
@@ -45,3 +46,30 @@ class Student(db.Model):
     s_name = db.Column(db.String(24), nullable=False)
     gender = db.Column(db.Boolean, default=True)
     grade_id = db.Column(db.Integer, db.ForeignKey('grade.g_id'))
+
+    def to_dict(self):
+        return {
+            's_id': self.s_id,
+            's_name': self.s_name,
+            'gender': self.gender,
+            'grade_name': self.grade.g_name
+        }
+
+
+# rp = db.table('role_permission',
+#               db.Column('r_id', db.Integer, db.ForeignKey('role.r_id'), primary_key=True),
+#               db.Column('p_id', db.Integer, db.ForeignKey('permission.p_id'), primary_key=True))
+#
+#
+# class Role(db.Model):
+#     __tablename__ = 'role'
+#     r_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+#     r_name = db.Column(db.String(30), nullable=False)
+#     user = db.relationship('User', backref='role', lazy='dynamic')
+#
+#
+# class Permission(db.Model):
+#     __tablename__ = 'permission'
+#     p_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+#     p_name = db.Column(db.String(30), nullable=False)
+#     roles = db.relationship('Role', secondary=rp, backref='permission', lazy='dynamic')

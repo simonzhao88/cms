@@ -1,13 +1,17 @@
 import os
 import random
 
+import redis
+
 BASE_DIR = os.path.dirname(__file__)
 
 
 class Config:
     CSRF_ENABLED = True
     SECRET_KEY = random.randrange(16)
-    BLOG_ADMIN = 'simon@email.com'
+    SECRET_KEY = os.urandom(16)
+    SESSION_TYPE = 'redis'
+    SESSION_REDIS = redis.Redis(host='127.0.0.1', port='6379')
     GRADE_PER_PAGE = 5
     STUDENT_PER_PAGE = 5
     # 静态文件路径

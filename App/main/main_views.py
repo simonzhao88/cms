@@ -7,7 +7,6 @@ from utils import status_code
 from utils.login_required import login_required
 from . import main
 
-
 @main.route('/')
 def index():
     return render_template('index.html')
@@ -91,6 +90,13 @@ class GradeApi(Resource):
                                    help='请输入正确的班级名~')
 
     def get(self):
+        g_id = request.args.get('g_id')
+        if g_id:
+            grade = Grade.query.get(g_id)
+            return {
+                'code': 200,
+                'grade': grade.to_dict()
+            }
         grades = Grade.query.all()
         return {
             'code': 200,
@@ -124,12 +130,19 @@ class StudentApi(Resource):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('s_name', type=str, required=True,
                                    help='请输入正确的学生名~')
-        self.reqparse.add_argument('gender', type=bool, required=True,
+        self.reqparse.add_argument('gender', type=int, required=True,
                                    help='请输入正确的性别~')
         self.reqparse.add_argument('grade', type=int, required=True,
                                    help='请输入正确的班级名~')
 
     def get(self):
+        s_id = request.args.get('s_id')
+        if s_id:
+            student = Student.query.get(s_id)
+            return {
+                'code': 200,
+                'student': student.to_dict()
+            }
         students = Student.query.all()
         return {
             'code': 200,
@@ -165,4 +178,4 @@ class StudentApi(Resource):
 
 
 api.add_resource(GradeApi, '/api/grade/', '/api/grade/<int:id>')
-api.add_resource(StudentApi, '/api/student/')
+api.add_resource(StudentApi, '/api/student/', '/api/student/<int:id>')

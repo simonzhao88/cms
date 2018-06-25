@@ -16,5 +16,7 @@ def create_app(development):
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
+    from .roles import role as role_blueprint
+    app.register_blueprint(role_blueprint)
     ext_init(app)
     return app

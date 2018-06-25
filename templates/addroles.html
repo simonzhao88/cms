@@ -45,7 +45,7 @@ $("body").click(function(i){ !$(i.target).parents(".select").first().is(s) ? _hi
 <th width="100">角色名称</th>
 <td>
 <div class="selectbox" style="width:230px;">
-<input type="text" name="grade_name" placeholder="请填入角色名称">
+<input type="text" name="role_name" placeholder="请填入角色名称">
 </div>
 </td>
 </tr>
@@ -53,7 +53,7 @@ $("body").click(function(i){ !$(i.target).parents(".select").first().is(s) ? _hi
 </table>
 <div id="BtmBtn">
 <div class="btn_box floatR">
-	<input name="" type="submit" value="提交">
+	<input id="addrole" type="submit" value="提交">
 </div>
 </div>
 </div>
@@ -64,5 +64,16 @@ $("body").click(function(i){ !$(i.target).parents(".select").first().is(s) ? _hi
 
 </div>
 <!-- /Popup -->
+<script type="text/javascript">
+    $('#addrole').on('click', function (e) {
+        e.preventDefault();
+        var r_name = $('input[name="role_name"]').val();
+        $.post('/api/role/', {r_name:r_name}, function (result) {
+            if (result.code==200){
+
+            }
+        })
+    })
+</script>
 </body>
 </html>

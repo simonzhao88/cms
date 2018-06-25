@@ -13,7 +13,7 @@ class User(db.Model):
     email = db.Column(db.String(24))
     avatar = db.Column(db.String(168), default='/static/img/icons/avatar.png')
     phone = db.Column(db.String(15))
-    role_id = db.Column(db.Integer, db.ForeignKey('role.r_id'))
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.r_id'), default=1)
 
     @property
     def password(self):
@@ -52,24 +52,25 @@ class Student(db.Model):
             's_id': self.s_id,
             's_name': self.s_name,
             'gender': self.gender,
+            'grade_id': self.grade_id,
             'grade_name': self.grade.g_name
         }
 
 
-# rp = db.table('role_permission',
-#               db.Column('r_id', db.Integer, db.ForeignKey('role.r_id'), primary_key=True),
-#               db.Column('p_id', db.Integer, db.ForeignKey('permission.p_id'), primary_key=True))
-#
-#
-# class Role(db.Model):
-#     __tablename__ = 'role'
-#     r_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-#     r_name = db.Column(db.String(30), nullable=False)
-#     user = db.relationship('User', backref='role', lazy='dynamic')
-#
-#
-# class Permission(db.Model):
-#     __tablename__ = 'permission'
-#     p_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-#     p_name = db.Column(db.String(30), nullable=False)
-#     roles = db.relationship('Role', secondary=rp, backref='permission', lazy='dynamic')
+rp = db.table('role_permission',
+              db.Column('r_id', db.Integer, db.ForeignKey('roles.r_id'), primary_key=True),
+              db.Column('p_id', db.Integer, db.ForeignKey('permission.p_id'), primary_key=True))
+
+
+class Role(db.Model):
+    __tablename__ = 'roles'
+    r_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    r_name = db.Column(db.String(30), nullable=False)
+    user = db.relationship('User', backref='roles', lazy='dynamic')
+
+
+class Permission(db.Model):
+    __tablename__ = 'permission'
+    p_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    p_name = db.Column(db.String(30), nullable=False)
+    roles = db.relationship('Role', secondary=rp, backref='permission', lazy='dynamic')

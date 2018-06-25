@@ -96,7 +96,7 @@
 
                 </table>
                 <div id="BtmBtn">
-                    <div class="btn_box floatR"><input name="" id="addstu" type="submit" value="提交"></div>
+                    <div class="btn_box floatR"><input id="addstu" type="button" value="提交"></div>
                 </div>
             </form>
         </div>
@@ -104,6 +104,7 @@
 </div>
 <script type="text/javascript">
     $(function () {
+        var s_id = location.search.split('=')[1];
         $.getJSON('/api/grade/', function (result) {
             if (result.code == 200) {
                 var html = '';
@@ -113,12 +114,27 @@
                 $('#grade_id').append(html)
             }
         });
+        $.get('/api/student/',{s_id:s_id}, function(result) {
+           if (result.code == 200 && s_id){
+               $('input[name="s_name"]').val(result.student.s_name);
+               if (result.student.gender){
+                   var gender = 1;
+               }else {gender = 0}
+               $('#gender').val(gender);
+               $('#grade_id').val(result.student.grade_id)
+           }
+        });
+
         $('#addstu').on('click', function (e) {
-            e.preventDefault();
-            $('#form-addstu').ajaxSubmit({
+            {#e.preventDefault();#}
+            var gender = $('#gender').val();
+            var s_name =  $('input[name="s_name"]').val();
+            var grade = $('#grade_id').val();
+            $.ajax({
                 url: '/api/student/',
-                type: 'post',
+                data: {gender:gender, s_name:s_name, grade:grade},
                 dataType: 'json',
+                type: 'post',
                 success: function (data) {
                     if (data.code == 200) {
                         alert(data.msg);

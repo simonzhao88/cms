@@ -83,6 +83,12 @@
 <!-- /Popup -->
 <script type="text/javascript">
     $(function () {
+        var g_id = location.search.split('=')[1];
+        $.get('/api/grade/',{g_id:g_id}, function (result) {
+            if (result.code==200 && g_id){
+                $('#grade_name').val(result.grade.g_name)
+            }
+        } );
         $('#commit').on('click', function () {
             var grade_name = $('#grade_name').val();
             $.ajax({
@@ -93,7 +99,7 @@
                 success: function (data) {
                     if(data.code == 200){
                         alert(data.msg);
-                        location.href = {{ url_for('.grade') }}
+                        location.href ={{ url_for('.grade') }}
                     }
                     else{
                         alert('添加失败~')

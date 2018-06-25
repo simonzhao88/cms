@@ -26,7 +26,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost:3306/cms'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@192.168.5.100:3306/cms'
     SQLALCHEMY_MIGRATE_REPO = os.path.join(BASE_DIR, 'db_repository')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

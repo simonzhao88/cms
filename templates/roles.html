@@ -32,12 +32,24 @@
 <th>角色名称</th>
 <th>操作</th>
 </tr>
-<tr>
+<tr id="roles">
 <td>1</td>
 <td>管理员</td>
 <td><a href="p2.html">编辑|删除</a></td>
 </tr>
-
+<script type="text/javascript">
+    $.get('/api/role/', function (result) {
+        if (result.code==200){
+            var role_html = '';
+            for(var i=0; i<result.roles.length; i++){
+                role_html += '<td>' + result.roles[i].r_id +
+                        '</td><td>' + result.roles[i].r_name +
+                        '</td><td><a href"p2.html>编辑|删除</a></td>'
+            }
+            $('#roles').append(role_html)
+        }
+    })
+</script>
 </table>
 </div>
 

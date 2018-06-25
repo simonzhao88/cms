@@ -1,5 +1,6 @@
 OK = 200
 DATABASE_ERROR = {'code': 0, 'msg': '数据库错误，稍后重试~'}
+SUCCESS = {'code': 200, 'msg': '请求成功～'}
 
 # 用户模块
 USER_REGISTER_NOT_NULL = {'code': 1001, 'msg': '请填写完所有参数~'}

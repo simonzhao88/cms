@@ -5,6 +5,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 db = SQLAlchemy()
 
 
+class Role(db.Model):
+    __tablename__ = 'roles'
+    r_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    r_name = db.Column(db.String(30), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.u_id'), nullable=True)
+
+    def to_dict(self):
+        return {
+            'r_id': self.r_id,
+            'r_name': self.r_name
+        }
+
+
 class User(db.Model):
     u_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     username = db.Column(db.String(24), unique=True, nullable=False)
@@ -13,7 +26,7 @@ class User(db.Model):
     email = db.Column(db.String(24))
     avatar = db.Column(db.String(168), default='/static/img/icons/avatar.png')
     phone = db.Column(db.String(15))
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.r_id'), default=1)
+    role_id = db.relationship('Role', backref='role', lazy='dynamic')
 
     @property
     def password(self):
@@ -60,13 +73,6 @@ class Student(db.Model):
 rp = db.table('role_permission',
               db.Column('r_id', db.Integer, db.ForeignKey('roles.r_id'), primary_key=True),
               db.Column('p_id', db.Integer, db.ForeignKey('permission.p_id'), primary_key=True))
-
-
-class Role(db.Model):
-    __tablename__ = 'roles'
-    r_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    r_name = db.Column(db.String(30), nullable=False)
-    user = db.relationship('User', backref='roles', lazy='dynamic')
 
 
 class Permission(db.Model):

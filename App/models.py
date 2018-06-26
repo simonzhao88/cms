@@ -5,11 +5,17 @@ from werkzeug.security import generate_password_hash, check_password_hash
 db = SQLAlchemy()
 
 
+rp = db.Table('rp',
+              db.Column('r_id', db.Integer, db.ForeignKey('roles.r_id'), primary_key=True),
+              db.Column('p_id', db.Integer, db.ForeignKey('permission.p_id'), primary_key=True))
+
+
 class Role(db.Model):
     __tablename__ = 'roles'
     r_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     r_name = db.Column(db.String(30), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.u_id'), nullable=True)
+    users = db.relationship('User', backref='role', lazy='dynamic')
+    # permission = db.relationship('Permission', secondary=rp, backref='roles', lazy='dynamic')
 
     def to_dict(self):
         return {
@@ -19,6 +25,7 @@ class Role(db.Model):
 
 
 class User(db.Model):
+    __tablename__ = 'user'
     u_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     username = db.Column(db.String(24), unique=True, nullable=False)
     password_hash = db.Column(db.String(168), nullable=False)
@@ -26,7 +33,7 @@ class User(db.Model):
     email = db.Column(db.String(24))
     avatar = db.Column(db.String(168), default='/static/img/icons/avatar.png')
     phone = db.Column(db.String(15))
-    role_id = db.relationship('Role', backref='role', lazy='dynamic')
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.r_id'))
 
     @property
     def password(self):
@@ -38,6 +45,13 @@ class User(db.Model):
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def to_dict(self):
+        return {
+            'u_id': self.u_id,
+            'u_name': self.username,
+            'role': self.role.r_name if self.role else '无'
+        }
 
 
 class Grade(db.Model):
@@ -70,13 +84,14 @@ class Student(db.Model):
         }
 
 
-rp = db.table('role_permission',
-              db.Column('r_id', db.Integer, db.ForeignKey('roles.r_id'), primary_key=True),
-              db.Column('p_id', db.Integer, db.ForeignKey('permission.p_id'), primary_key=True))
-
-
 class Permission(db.Model):
     __tablename__ = 'permission'
     p_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     p_name = db.Column(db.String(30), nullable=False)
     roles = db.relationship('Role', secondary=rp, backref='permission', lazy='dynamic')
+
+    def to_dict(self):
+        return {
+            'p_id': self.p_id,
+            'p_name': self.p_name
+        }

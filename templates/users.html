@@ -26,7 +26,7 @@
 <div id="MainForm">
 <div class="form_boxA">
 <h2>用户信息列表</h2>
-<table cellpadding="0" cellspacing="0">
+<table cellpadding="0" cellspacing="0" id="users">
 <tr>
 <th>序号</th>
 <th>名称</th>
@@ -40,11 +40,6 @@
 <td><a href="p2.html">编辑|删除</a></td>
 </tr>
 <tr>
-<td>2</td>
-<td>蔡文姬</td>
-<td>无</td>
-<td><a href="p2.html">编辑|删除</a></td>
-</tr>
 
 </table>
 <p class="msg">共找到47条年度预算记录，当前显示从第1条至第10条</p>
@@ -64,6 +59,19 @@
 </ul>
 
 </div>
-
+<script type="text/javascript">
+    $.get('/api/user/', function (result) {
+        if (result.code==200){
+            var user_html = '';
+            for(var i=0; i<result.users.length; i++){
+                user_html += '<tr><td>' + result.users[i].u_id +
+                        '</td><td>' + result.users[i].u_name +
+                        '</td><td>' + result.users[i].role +
+                        '</td><td><a href"p2.html>编辑|删除</a></td></tr>'
+            }
+            $('#roles').append(user_html)
+        }
+    })
+</script>
 </body>
 </html>

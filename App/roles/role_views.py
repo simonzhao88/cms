@@ -47,7 +47,22 @@ class UserApi(Resource):
         }
 
     def post(self):
-        pass
+        username = request.form.get('username')
+        pwd1 = request.form.get('pwd1')
+        pwd2 = request.form.get('pwd2')
+        role = request.form.get('role')
+        u = User.query.filter_by(username=username).first()
+        if u:
+            return status_code.USER_REGISTER_EXITS_USER
+        elif pwd1 != pwd2:
+            return status_code.USER_REGISTER_PASSWORD_IS_NOT_VALID
+        user = User(username=username, password_hash=pwd1)
+        user.role_id = role
+        db.session.add(user)
+        db.session.commit()
+        return status_code.SUCCESS
+
+
 
 
 api.add_resource(RoleApi, '/api/role/')

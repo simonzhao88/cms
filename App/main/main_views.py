@@ -73,7 +73,7 @@ def users():
 
 
 @main.route('/adduser/')
-@login_required
+# @login_required
 def add_user():
     return render_template('add_edit.html')
 

@@ -79,17 +79,21 @@
                             <!-- /selectbox --></td>
                     </tr>
                     <tr>
-                        <th>权限<span class="f_cB">*</span></th>
+                        <th>角色<span class="f_cB">*</span></th>
                         <td><!-- selectbox -->
                             <div class="selectbox" style="width:230px;">
                                 <dl class="select">
                                     <dt>
-                                        <select id="permission_id" name="permission" style="width:120px;">
+                                        <select id="role_id" name="role" style="width:120px;">
+                                            <option>无</option>
                                         </select>
                                     </dt>
                                 </dl>
                             </div>
                         </td>
+                    </tr>
+                    <tr>
+                        <span id="hint"></span>
                     </tr>
                 </table>
                 <div id="BtmBtn">
@@ -101,17 +105,50 @@
 </div>
 </body>
 <script type="text/javascript">
+    function showSuccessMsg() {
+        $('#hint').fadeIn('fast', function () {
+            setTimeout(function () {
+                $('#hint').fadeOut('fast', function () {
+                });
+            }, 1000)
+        });
+    }
+
+    $.getJSON('/api/role/', function (result) {
+        if (result.code == 200) {
+            var html = '';
+            for (var i = 0; i < result.roles.length; i++) {
+                html += '<option value="' + result.roles[i].r_id + '">' + result.roles[i].r_name + '</option>'
+            }
+            $('#role_id').append(html)
+        }
+    });
     $('#adduser').on('click', function (e) {
         e.preventDefault();
         var username = $('input[name="username"]').val();
         var pwd1 = $('input[name="password1"]').val();
         var pwd2 = $('input[name="password2"]').val();
-        $.post('/api/permission/', {username: username, pwd1: pwd1, pwd2: pwd2}, function (result) {
-            if (result.code == 200) {
-                alert('添加成功');
-                location.href = '/permissions/'
-            }
-        })
+        var role = $('#role_id').val();
+        if (pwd1 != pwd2) {
+            $('#hint').val('两尺输入密码不一致～');
+            showSuccessMsg();
+            return false
+        }
+        $.post('/api/user/', {
+                username: username,
+                pwd1: pwd1,
+                pwd2: pwd2,
+                role: role
+            },
+            function (result) {
+                if (result.code == 200) {
+                    alert('添加成功');
+                    location.href = '/users/'
+                }else {
+                    $('#hint').val(result.msg);
+                    showSuccessMsg();
+                }
+            })
     })
 </script>
 </html>

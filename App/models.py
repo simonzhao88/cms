@@ -15,7 +15,6 @@ class Role(db.Model):
     r_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     r_name = db.Column(db.String(30), nullable=False)
     users = db.relationship('User', backref='role', lazy='dynamic')
-    # permission = db.relationship('Permission', secondary=rp, backref='roles', lazy='dynamic')
 
     def to_dict(self):
         return {

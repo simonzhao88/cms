@@ -16,8 +16,12 @@ class RoleApi(Resource):
 
     def post(self):
         role_name = request.form.get('r_name')
+        p_id = request.form.get('p_id')
+        permission = Permission.query.get(p_id)
         role = Role(r_name=role_name)
         db.session.add(role)
+        permission.roles.append(role)
+        db.session.add(permission)
         db.session.commit()
         return status_code.SUCCESS
 
@@ -61,8 +65,6 @@ class UserApi(Resource):
         db.session.add(user)
         db.session.commit()
         return status_code.SUCCESS
-
-
 
 
 api.add_resource(RoleApi, '/api/role/')

@@ -105,44 +105,74 @@
 </div>
 </body>
 <script type="text/javascript">
-    function showSuccessMsg() {
-        $('#hint').fadeIn('fast', function () {
-            setTimeout(function () {
-                $('#hint').fadeOut('fast', function () {
-                });
-            }, 2000)
-        });
-    }
+    $(function () {
 
-    $.getJSON('/api/role/', function (result) {
-        if (result.code == 200) {
-            var html = '';
-            for (var i = 0; i < result.roles.length; i++) {
-                html += '<option value="' + result.roles[i].r_id + '">' + result.roles[i].r_name + '</option>'
-            }
-            $('#role_id').append(html)
+        function showSuccessMsg() {
+            $('#hint').fadeIn('fast', function () {
+                setTimeout(function () {
+                    $('#hint').fadeOut('fast', function () {
+                    });
+                }, 2000)
+            });
         }
-    });
-    var u_id = location.search.split('=')[1];
-    if (u_id){
-        $.get('/api/user/',{u_id: u_id}, function (resulet) {
-            $('input[name="username"]').val(resulet.user.u_name);
-            $('input[name="password1"]').attr('readonly', true);
-            $('input[name="password1"]').attr('placeholder', '禁止输入');
-            $('input[name="password2"]').attr('readonly', true);
-            $('input[name="password2"]').attr('placeholder', '禁止输入');
-            $('#role_id').val(resulet.user.role_id)
+
+        $.getJSON('/api/role/', function (result) {
+            if (result.code == 200) {
+                var html = '';
+                for (var i = 0; i < result.roles.length; i++) {
+                    html += '<option value="' + result.roles[i].r_id + '">' + result.roles[i].r_name + '</option>'
+                }
+                $('#role_id').append(html)
+            }
         });
-        $('#adduser').unbind();
         $('#adduser').on('click', function (e) {
             e.preventDefault();
             var username = $('input[name="username"]').val();
+            var pwd1 = $('input[name="password1"]').val();
+            var pwd2 = $('input[name="password2"]').val();
             var role = $('#role_id').val();
-            $.ajax({
+            if (pwd1 != pwd2) {
+                $('#hint').text('两尺输入密码不一致～');
+                showSuccessMsg();
+                return false
+            }
+            $.post('/api/user/', {
+                    username: username,
+                    pwd1: pwd1,
+                    pwd2: pwd2,
+                    role: role
+                },
+                function (result) {
+                    if (result.code == 200) {
+                        alert('添加成功');
+                        location.href = '/users/'
+                    } else {
+                        $('#hint').text(result.msg);
+                        showSuccessMsg();
+                    }
+                })
+           });
+        var u_id = location.search.split('=')[1];
+        if (u_id) {
+            $.get('/api/user/', {u_id: u_id}, function (resulet) {
+                $('input[name="username"]').val(resulet.user.u_name);
+                $('input[name="password1"]').attr('readonly', true);
+                $('input[name="password1"]').attr('placeholder', '禁止输入');
+                $('input[name="password2"]').attr('readonly', true);
+                $('input[name="password2"]').attr('placeholder', '禁止输入');
+                $('#role_id').val(resulet.user.role_id)
+            });
+            $('#adduser').unbind();
+            $('#adduser').on('click', function (e) {
+                e.preventDefault();
+                var username = $('input[name="username"]').val();
+                var role = $('#role_id').val();
+                $.ajax({
                     url: '/api/user/',
-                    data:{
+                    data: {
                         username: username,
-                        role: role},
+                        role: role
+                    },
                     type: 'patch',
                     success: function (result) {
                         if (result.code == 200) {
@@ -152,37 +182,10 @@
                             $('#hint').text(result.msg);
                             showSuccessMsg();
                         }
-            }
+                    }
+                })
             })
-        })
-    }
-
-    $('#adduser').on('click', function (e) {
-        e.preventDefault();
-        var username = $('input[name="username"]').val();
-        var pwd1 = $('input[name="password1"]').val();
-        var pwd2 = $('input[name="password2"]').val();
-        var role = $('#role_id').val();
-        if (pwd1 != pwd2) {
-            $('#hint').text('两尺输入密码不一致～');
-            showSuccessMsg();
-            return false
         }
-        $.post('/api/user/', {
-                username: username,
-                pwd1: pwd1,
-                pwd2: pwd2,
-                role: role
-            },
-            function (result) {
-                if (result.code == 200) {
-                    alert('添加成功');
-                    location.href = '/users/'
-                } else {
-                    $('#hint').text(result.msg);
-                    showSuccessMsg();
-                }
-            })
     })
 </script>
 </html>

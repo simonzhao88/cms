@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, session
 from flask_restful import Resource
 
 from App.exts_init import api
@@ -117,6 +117,32 @@ class UserApi(Resource):
         return status_code.SUCCESS
 
 
+class UserPwdApi(Resource):
+    def get(self):
+        u_id = session.get('u_id')
+        user = User.query.get(u_id)
+        return {
+            'code': 200,
+            'user': user.to_dict()
+        }
+
+    def put(self):
+        u_id = session.get('u_id')
+        user = User.query.get(u_id)
+        old_pwd = request.form.get('old_pwd')
+        new_pwd = request.form.get('new_pwd')
+        rnew_pwd = request.form.get('rnew_pwd')
+        if not user.verify_password(old_pwd):
+            return status_code.USER_CHAGE_PASSWORD_ERROE
+        elif new_pwd !=rnew_pwd:
+            return status_code.USER_REGISTER_PASSWORD_IS_NOT_VALID
+        user.password = new_pwd
+        db.session.add(user)
+        db.session.commit()
+        return status_code.SUCCESS
+
+
 api.add_resource(RoleApi, '/api/role/')
 api.add_resource(PermissionApi, '/api/permission/')
 api.add_resource(UserApi, '/api/user/')
+api.add_resource(UserPwdApi, '/api/user/changepwd/')

@@ -12,6 +12,7 @@ USER_REGISTER_EXITS_USER = {'code': 1004, 'msg': '该用户已注册，请直接
 USER_LOGIN_NOT_NULL = {'code': 1005, 'msg': '请填写完所有参数~'}
 USER_LOGIN_MOBILE_ERROE = {'code': 1006, 'msg': '用户不存在，请先注册~'}
 USER_LOGIN_PASSWORD_ERROE = {'code': 1007, 'msg': '用户名或密码错误~'}
+USER_CHAGE_PASSWORD_ERROE = {'code': 1008, 'msg': '密码错误~'}
 
 
 USER_CHANGE_PROFILE_IMAGES_ERROR = {'code': 1008, 'msg': '上传图片格式错误~'}

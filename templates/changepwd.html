@@ -12,36 +12,38 @@
     <div class="pageTop">
         <div class="page">
             <img src="/static/img/coin02.png"/><span><a href="#">首页</a>&nbsp;-&nbsp;<a
-                href="#">公共管理</a>&nbsp;-</span>&nbsp;修改密码
+                href="#">系统管理</a>&nbsp;-</span>&nbsp;修改密码
         </div>
     </div>
     <div class="page ">
         <!-- 修改密码页面样式 -->
         <div class="bacen">
             <div class="bbD">
-                &nbsp;&nbsp;&nbsp;&nbsp;管理员UID：&nbsp;&nbsp;&nbsp;&nbsp;123
+                &nbsp;&nbsp;&nbsp;&nbsp;管理员UID：&nbsp;&nbsp;&nbsp;&nbsp;<span id="u_id"></span>
             </div>
-            <div class="bbD">管理员用户名：&nbsp;&nbsp;&nbsp;&nbsp;123456789</div>
-            <div class="bbD">
-                &nbsp;&nbsp;&nbsp;&nbsp;输入旧密码：<input type="password" class="input3"
-                                                     onblur="checkpwd1()" id="pwd1"/> <img class="imga"
-                                                                                           src="/static/img/ok.png"/><img
-                    class="imgb" src="/static/img/no.png"/>
-            </div>
-            <div class="bbD">
-                &nbsp;&nbsp;&nbsp;&nbsp;输入新密码：<input type="password" class="input3"
-                                                     onblur="checkpwd2()" id="pwd2"/> <img class="imga"
-                                                                                           src="/static/img/ok.png"/><img
-                    class="imgb" src="/static/img/no.png"/>
-            </div>
-            <div class="bbD">
-                再次确认密码：<input type="password" class="input3" onblur="checkpwd3()"
-                              id="pwd3"/> <img class="imga" src="/static/img/ok.png"/><img
-                    class="imgb" src="/static/img/no.png"/>
-            </div>
+            <div class="bbD">管理员用户名：&nbsp;&nbsp;&nbsp;&nbsp;<span id="u_name"></span></div>
+            <form>
+                <div class="bbD">
+                    &nbsp;&nbsp;&nbsp;&nbsp;输入旧密码：<input type="password" class="input3"
+                                                         onblur="checkpwd1()" id="pwd1"/> <img class="imga"
+                                                                                               src="/static/img/ok.png"/><img
+                        class="imgb" src="/static/img/no.png"/>
+                </div>
+                <div class="bbD">
+                    &nbsp;&nbsp;&nbsp;&nbsp;输入新密码：<input type="password" class="input3"
+                                                         onblur="checkpwd2()" id="pwd2"/> <img class="imga"
+                                                                                               src="/static/img/ok.png"/><img
+                        class="imgb" src="/static/img/no.png"/>
+                </div>
+                <div class="bbD">
+                    再次确认密码：<input type="password" class="input3" onblur="checkpwd3()"
+                                  id="pwd3"/> <img class="imga" src="/static/img/ok.png"/><img
+                        class="imgb" src="/static/img/no.png"/>
+                </div>
+            </form>
             <div class="bbD">
                 <p class="bbDP">
-                    <button class="btn_ok btn_yes" href="#">提交</button>
+                    <button class="btn_ok btn_yes" type="button">提交</button>
                     <a class="btn_ok btn_no" href="#">取消</a>
                 </p>
             </div>
@@ -52,6 +54,37 @@
 </div>
 </body>
 <script type="text/javascript">
+    $(function () {
+        $.get('/api/user/changepwd/', function (result) {
+            if (result.code == 200) {
+                $('#u_id').text(result.user.u_id);
+                $('#u_name').text(result.user.u_name)
+            }
+        });
+        $('.btn_yes').on('click', function () {
+            var old_pwd = $('#pwd1').val();
+            var new_pwd = $('#pwd2').val();
+            var rnew_pwd = $('#pwd3').val();
+            $.ajax({
+                url: '/api/user/changepwd/',
+                data: {
+                    old_pwd: old_pwd,
+                    new_pwd: new_pwd,
+                    rnew_pwd: rnew_pwd
+                },
+                type: 'put',
+                success: function (result) {
+                    if (result.code == 200) {
+                        alert('修改密码成功～')
+                    } else {
+                        alert(result.msg)
+                    }
+                }
+            })
+        })
+
+    })
+
     function checkpwd1() {
         var user = document.getElementById('pwd1').value.trim();
         if (user.length >= 6 && user.length <= 12) {
@@ -88,5 +121,7 @@
         }
         ;
     }
+
+
 </script>
 </html>

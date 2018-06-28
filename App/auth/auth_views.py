@@ -1,4 +1,6 @@
-from flask import request, render_template, session, jsonify
+from datetime import timedelta
+
+from flask import request, render_template, session, app
 from flask_restful import Resource, reqparse
 
 from App.exts_init import api
@@ -55,6 +57,8 @@ class LoginApi(Resource):
         u = User.query.filter_by(username=username).first()
         if u and u.verify_password(password):
             session['u_id'] = u.u_id
+            session.permanent = True
+            app.permanent_session_lifetime = timedelta(minutes=10)
             return {
                 'code': 200,
                 'msg': '登陆成功~'

@@ -33,6 +33,7 @@ def grade():
 
 
 @main.route('/addgrade/')
+@login_required
 def add_grade():
     return render_template('addgrade.html')
 
@@ -43,42 +44,49 @@ def student():
 
 
 @main.route('/addstu/')
+@login_required
 def add_stu():
     return render_template('addstu.html')
 
 
 @main.route('/roles/')
+@login_required
 def roles():
     return render_template('roles.html')
 
 
 @main.route('/addRoles/')
+@login_required
 def add_roles():
     return render_template('addroles.html')
 
 
 @main.route('/permissions/')
+@login_required
 def permissions():
     return render_template('permissions.html')
 
 
 @main.route('/addPermission/')
+@login_required
 def add_permission():
     return render_template('addpermission.html')
 
 
 @main.route('/users/')
+@login_required
 def users():
     return render_template('users.html')
 
 
 @main.route('/adduser/')
-# @login_required
+@login_required
 def add_user():
     return render_template('add_edit.html')
 
 
 @main.route('/changepwd/')
+@login_required
 def change_pwd():
     return render_template('changepwd.html')
 

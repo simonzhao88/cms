@@ -119,10 +119,20 @@ class GradeApi(Resource):
         }
 
     def delete(self):
-        pass
+        g_id = request.form.get('g_id')
+        g = Grade.query.get(g_id)
+        db.session.delete(g)
+        db.session.commit()
+        return status_code.SUCCESS
 
     def patch(self):
-        pass
+        g_name = request.form.get('grade_name')
+        g_id = request.form.get('g_id')
+        g = Grade.query.get(g_id)
+        g.g_name = g_name
+        db.session.add(g)
+        db.session.commit()
+        return status_code.SUCCESS
 
 
 class StudentApi(Resource):
@@ -171,10 +181,32 @@ class StudentApi(Resource):
         }
 
     def delete(self):
-        pass
+        s_id = request.form.get('s_id')
+        stu = Student.query.get(s_id)
+        # db.session.delete(stu)
+        # db.session.commit()
+        return status_code.SUCCESS
 
     def patch(self):
-        pass
+        s_id = request.form.get('s_id')
+        args = self.reqparse.parse_args()
+        s_name = args.get('s_name')
+        gender = args.get('gender')
+        grade_id = args.get('grade')
+        stu = Student.query.get(s_id)
+        stu.s_name = s_name
+        stu.gender = gender
+        stu.grade_id = grade_id
+        try:
+            db.session.add(stu)
+            db.session.commit()
+        except Exception as e:
+            return status_code.DATABASE_ERROR
+        return {
+            'code': status_code.OK,
+            'msg': '修改学生信息成功~',
+            'stu': stu.to_dict()
+        }
 
 
 api.add_resource(GradeApi, '/api/grade/', '/api/grade/<int:id>')

@@ -57,19 +57,30 @@
             if (result.code == 200) {
                 var html = '';
                 for (var i = 0; i < result.students.length; i++) {
-                    html += '<tr> ' +
-                        '<td>' + result.students[i].s_id + '</td> ' +
+                    html += '<tr s_id="' + result.students[i].s_id +
+                        '"><td>' + result.students[i].s_id + '</td> ' +
                         '<td>' + result.students[i].s_name + '</td> ' +
                         '<td>' + result.students[i].grade_name + '</td > ' +
                         '<td> <a href = "{{ url_for('.add_stu')}}?g_id=' +
                         result.students[i].s_id + '"> 编辑 </a> | ' +
-                        '<a href="javascript:void(0) id="del' + result.students[i].s_id + '">删除</a> </td> ' +
+                        '<a href="javascript:void(0)" class="del" s_id="' + result.students[i].s_id + '">删除</a> </td> ' +
                         '</tr>'
                 }
                 $('#title').append(html);
-                $('#edit + result.students[i].s_id').on('click', function (e) {
-                    var g_id = $('.edit').attr('g_id');
-                    alert(g_id)
+                $('.del').on('click', function (e) {
+                    var s_id = $(this).attr('s_id');
+                    var a = $(this);
+                    $.ajax({
+                        url: '/api/student/',
+                        data: {s_id: s_id},
+                        type: 'delete',
+                        success: function (result) {
+                            if (result.code==200){
+                                a.parent().parent().hide();
+                                alert('删除成功~')
+                            }
+                        }
+                    })
                 })
             }
         });

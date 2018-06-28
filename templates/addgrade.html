@@ -84,30 +84,39 @@
 <script type="text/javascript">
     $(function () {
         var g_id = location.search.split('=')[1];
-        $.get('/api/grade/',{g_id:g_id}, function (result) {
-            if (result.code==200 && g_id){
+        $.get('/api/grade/', {g_id: g_id}, function (result) {
+            if (result.code == 200 && g_id) {
                 $('#grade_name').val(result.grade.g_name)
             }
-        } );
+        });
+
         $('#commit').on('click', function () {
             var grade_name = $('#grade_name').val();
+            if (g_id) {
+                var type = 'patch';
+                var data = {grade_name: grade_name, g_id: g_id}
+            } else {
+                type = 'post';
+                data = {grade_name: grade_name}
+            }
             $.ajax({
                 url: '/api/grade/',
-                type: 'post',
-                data: {'grade_name': grade_name},
+                type: type,
+                data: data,
                 dataType: 'json',
                 success: function (data) {
-                    if(data.code == 200){
+                    if (data.code == 200) {
                         alert(data.msg);
-                        location.href ={{ url_for('.grade') }}
+                        location.href = '/grade/'
+
                     }
-                    else{
+                    else {
                         alert('添加失败~')
                     }
                 },
                 error: function () {
                     console.log('连接服务器失败，请稍后再试~')
-                }
+                },
             })
         })
     })

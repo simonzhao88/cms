@@ -126,15 +126,22 @@
         });
 
         $('#addstu').on('click', function (e) {
-            {#e.preventDefault();#}
+            var s_id = location.search.split('=')[1];
             var gender = $('#gender').val();
             var s_name =  $('input[name="s_name"]').val();
             var grade = $('#grade_id').val();
+            if (s_id){
+                var type = 'patch';
+                var data = {gender:gender, s_name:s_name, grade:grade, s_id:s_id}
+            }else {
+                type = 'post';
+                data = {gender:gender, s_name:s_name, grade:grade}
+            }
             $.ajax({
                 url: '/api/student/',
-                data: {gender:gender, s_name:s_name, grade:grade},
+                data: data,
                 dataType: 'json',
-                type: 'post',
+                type: type,
                 success: function (data) {
                     if (data.code == 200) {
                         alert(data.msg);

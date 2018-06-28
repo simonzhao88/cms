@@ -85,17 +85,17 @@
                                 <dl class="select">
                                     <dt>
                                         <select id="role_id" name="role" style="width:120px;">
-                                            <option>无</option>
                                         </select>
                                     </dt>
                                 </dl>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <span id="hint"></span>
-                    </tr>
+
                 </table>
+                <tr>
+                    <span id="hint" style="display: none; color: red;font-size: 16px">两次密码输入不一致</span>
+                </tr>
                 <div id="BtmBtn">
                     <div class="btn_box floatR"><input id="adduser" type="submit" value="提交"></div>
                 </div>
@@ -110,7 +110,7 @@
             setTimeout(function () {
                 $('#hint').fadeOut('fast', function () {
                 });
-            }, 1000)
+            }, 2000)
         });
     }
 
@@ -123,6 +123,40 @@
             $('#role_id').append(html)
         }
     });
+    var u_id = location.search.split('=')[1];
+    if (u_id){
+        $.get('/api/user/',{u_id: u_id}, function (resulet) {
+            $('input[name="username"]').val(resulet.user.u_name);
+            $('input[name="password1"]').attr('readonly', true);
+            $('input[name="password1"]').attr('placeholder', '禁止输入');
+            $('input[name="password2"]').attr('readonly', true);
+            $('input[name="password2"]').attr('placeholder', '禁止输入');
+            $('#role_id').val(resulet.user.role_id)
+        });
+        $('#adduser').unbind();
+        $('#adduser').on('click', function (e) {
+            e.preventDefault();
+            var username = $('input[name="username"]').val();
+            var role = $('#role_id').val();
+            $.ajax({
+                    url: '/api/user/',
+                    data:{
+                        username: username,
+                        role: role},
+                    type: 'patch',
+                    success: function (result) {
+                        if (result.code == 200) {
+                            alert('修改成功');
+                            location.href = '/users/'
+                        } else {
+                            $('#hint').text(result.msg);
+                            showSuccessMsg();
+                        }
+            }
+            })
+        })
+    }
+
     $('#adduser').on('click', function (e) {
         e.preventDefault();
         var username = $('input[name="username"]').val();
@@ -130,7 +164,7 @@
         var pwd2 = $('input[name="password2"]').val();
         var role = $('#role_id').val();
         if (pwd1 != pwd2) {
-            $('#hint').val('两尺输入密码不一致～');
+            $('#hint').text('两尺输入密码不一致～');
             showSuccessMsg();
             return false
         }
@@ -144,8 +178,8 @@
                 if (result.code == 200) {
                     alert('添加成功');
                     location.href = '/users/'
-                }else {
-                    $('#hint').val(result.msg);
+                } else {
+                    $('#hint').text(result.msg);
                     showSuccessMsg();
                 }
             })

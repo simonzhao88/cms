@@ -62,13 +62,29 @@
                         '<td>' + result.grades[i].g_name + '</td> ' +
                         '<td>' + result.grades[i].create_time + '</td > ' +
                         '<td> <a href = "{{ url_for('.add_grade')}}?g_id=' +
-                        result.grades[i].g_id +   '"> 编辑 </a> | ' +
-                        '<a href="javascript:void(0) id="del' + result.grades[i].g_id + '">删除</a> </td> ' +
+                        result.grades[i].g_id + '"> 编辑 </a> | ' +
+                        '<a href="javascript:void(0)" class="del" g_id="' + result.grades[i].g_id + '">删除</a> </td> ' +
                         '</tr>'
                 }
                 $('#title').append(html);
             }
+            $('.del').on('click', function () {
+                var g_id = $(this).attr('g_id');
+                var a = $(this);
+                $.ajax({
+                    url: '/api/grade/',
+                    data: {g_id: g_id},
+                    type: 'delete',
+                    success: function (result) {
+                        if (result.code==200){
+                            a.parent().parent().hide();
+                            alert('删除成功~')
+                        }
+                    }
+                })
+            })
         });
+
     })
 </script>
 </body>

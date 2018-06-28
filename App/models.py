@@ -19,7 +19,8 @@ class Role(db.Model):
     def to_dict(self):
         return {
             'r_id': self.r_id,
-            'r_name': self.r_name
+            'r_name': self.r_name,
+            'per_id': [per.p_id for per in self.permission if self.permission]
         }
 
 
@@ -49,7 +50,8 @@ class User(db.Model):
         return {
             'u_id': self.u_id,
             'u_name': self.username,
-            'role': self.role.r_name if self.role else '无'
+            'role': self.role.r_name if self.role else '无',
+            'role_id': self.role_id
         }
 
 

@@ -7,7 +7,9 @@ from utils import status_code
 from utils.login_required import login_required
 from . import main
 
+
 @main.route('/')
+@login_required
 def index():
     return render_template('index.html')
 
@@ -18,6 +20,7 @@ def head():
 
 
 @main.route('/left/')
+@login_required
 def left():
     return render_template('left.html')
 

@@ -100,7 +100,7 @@ class UserApi(Resource):
             return status_code.USER_REGISTER_EXITS_USER
         elif pwd1 != pwd2:
             return status_code.USER_REGISTER_PASSWORD_IS_NOT_VALID
-        user = User(username=username, password_hash=pwd1)
+        user = User(username=username, password=pwd1)
         user.role_id = role
         db.session.add(user)
         db.session.commit()
@@ -142,7 +142,19 @@ class UserPwdApi(Resource):
         return status_code.SUCCESS
 
 
+class UserPerApi(Resource):
+
+    def get(self):
+        u_id = session.get('u_id')
+        user = User.query.get(u_id)
+        return {
+            'code': 200,
+            'permission': user.permission_to_dict()
+        }
+
+
 api.add_resource(RoleApi, '/api/role/')
 api.add_resource(PermissionApi, '/api/permission/')
 api.add_resource(UserApi, '/api/user/')
 api.add_resource(UserPwdApi, '/api/user/changepwd/')
+api.add_resource(UserPerApi, '/api/user/permission/')

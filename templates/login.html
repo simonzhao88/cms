@@ -55,7 +55,7 @@
             type: 'post',
             success: function (data) {
                 if (data.code == 200) {
-                    location.href = '/'
+                    parent.location.href = '/'
                 } else {
                     alert(data.msg)
                 }

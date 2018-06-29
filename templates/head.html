@@ -15,8 +15,28 @@
 			<img class="headLogo" src="/static/img/logLOGO.png"/>
 		</div>
 		<div class="headR">
-			<span style="color:#FFF">欢迎：admin</span> <a href="head2.html" rel="external">【退出】</a>
+			<span style="color:#FFF"></span> <a href="head2.html" rel="external" id="logout">【退出】</a>
 		</div>
 	</div>
+<script type="text/javascript">
+    $(function () {
+        $.get('/api/user/permission/', function (result) {
+            if (result.code==200){
+                $('.headR span').text('欢迎：' + result.permission.u_name)
+                }
+            })
+    });
+    $('#logout').on('click', function () {
+        $.ajax({
+            url:'/auth/logout/',
+            type: 'delete',
+            success: function (result) {
+                if (result.code==200){
+                    parent.location.href = '/auth/login/'
+                }
+            }
+        })
+    })
+</script>
 </body>
 </html>

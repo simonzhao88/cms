@@ -54,6 +54,13 @@ class User(db.Model):
             'role_id': self.role_id
         }
 
+    def permission_to_dict(self):
+        return {
+            'u_name': self.username,
+            'role': self.role.r_name if self.role else '无',
+            'permission': [per.p_name for per in self.role.permission]
+        }
+
 
 class Grade(db.Model):
     g_id = db.Column(db.Integer, autoincrement=True, primary_key=True)

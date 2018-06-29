@@ -8,7 +8,6 @@ BASE_DIR = os.path.dirname(__file__)
 
 class Config:
     CSRF_ENABLED = True
-    SECRET_KEY = random.randrange(16)
     SECRET_KEY = os.urandom(16)
     SESSION_TYPE = 'redis'
     SESSION_REDIS = redis.Redis(host='127.0.0.1', port='6379')
@@ -26,7 +25,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@192.168.5.100:3306/cms'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost:3306/cms'
     SQLALCHEMY_MIGRATE_REPO = os.path.join(BASE_DIR, 'db_repository')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

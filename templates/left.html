@@ -23,12 +23,12 @@
 						src="/static/img/coin19.png" /><img class="icon4"
 						src="/static/img/coin20.png" />
 				</dt>
-				<dd>
+				<dd id="w_grade">
 					<img class="coin11" src="/static/img/coin111.png" /><img class="coin22"
 						src="/static/img/coin222.png" /><a class="cks" href="{{ url_for('.grade')}}"
 						target="main">班级列表</a><img class="icon5" src="/static/img/coin21.png" />
 				</dd>
-				<dd>
+				<dd id="a_grade">
 					<img class="coin11" src="/static/img/coin111.png" /><img class="coin22"
 						src="/static/img/coin222.png" /><a class="cks" href="{{ url_for('.add_grade')}}"
 						target="main">班级添加</a><img class="icon5" src="/static/img/coin21.png" />
@@ -41,12 +41,12 @@
 						src="/static/img/coin19.png" /><img class="icon4"
 						src="/static/img/coin20.png" />
 				</dt>
-				<dd>
+				<dd id="w_stu">
 					<img class="coin11" src="/static/img/coin111.png" /><img class="coin22"
 						src="/static/img/coin222.png" /><a class="cks" href="{{ url_for('.student')}}"
 						target="main">学生列表</a><img class="icon5" src="/static/img/coin21.png" />
 				</dd>
-				<dd>
+				<dd id="a_stu">
 					<img class="coin11" src="/static/img/coin111.png" /><img class="coin22"
 						src="/static/img/coin222.png" /><a class="cks" href="{{ url_for('.add_stu')}}"
 						target="main">添加学生</a><img class="icon5" src="/static/img/coin21.png" />
@@ -59,22 +59,22 @@
 						src="/static/img/coin19.png" /><img class="icon4"
 						src="/static/img/coin20.png" />
 				</dt>
-				<dd>
+				<dd id="w_role">
 					<img class="coin11" src="/static/img/coin111.png" /><img class="coin22"
 						src="/static/img/coin222.png" /><a class="cks" href="{{ url_for('.roles')}}"
 						target="main">角色列表</a><img class="icon5" src="/static/img/coin21.png" />
 				</dd>
-				<dd>
+				<dd id="a_role">
 					<img class="coin11" src="/static/img/coin111.png" /><img class="coin22"
 						src="/static/img/coin222.png" /><a class="cks" href="{{ url_for('.add_roles')}}"
 						target="main">添加角色</a><img class="icon5" src="/static/img/coin21.png" />
 				</dd>
-				<dd>
+				<dd id="w_per">
 					<img class="coin11" src="/static/img/coin111.png" /><img class="coin22"
 						src="/static/img/coin222.png" /><a class="cks" href="{{ url_for('.permissions')}}"
 						target="main">权限列表</a><img class="icon5" src="/static/img/coin21.png" />
 				</dd>
-				<dd>
+				<dd id="a_per">
 					<img class="coin11" src="/static/img/coin111.png" /><img class="coin22"
 						src="/static/img/coin222.png" /><a class="cks" href="{{ url_for('.add_permission')}}"
 						target="main">添加权限</a><img class="icon5" src="/static/img/coin21.png" />
@@ -87,13 +87,13 @@
 						src="/static/img/coin19.png" /><img class="icon4"
 						src="/static/img/coin20.png" />
 				</dt>
-				<dd>
+				<dd id="w_user">
 					<img class="coin11" src="/static/img/coin111.png" /><img class="coin22"
 						src="/static/img/coin222.png" /><a href="{{ url_for('.users')}}"
 						target="main" class="cks">用户列表</a><img class="icon5"
 						src="/static/img/coin21.png" />
 				</dd>
-				<dd>
+				<dd id="a_user">
 					<img class="coin11" src="/static/img/coin111.png" /><img class="coin22"
 						src="/static/img/coin222.png" /><a href="{{ url_for('.add_user')}}"
 						target="main" class="cks">添加用户</a><img class="icon5"
@@ -115,7 +115,7 @@
 				</dd>
 				<dd>
 					<img class="coin11" src="/static/img/coin111.png" /><img class="coin22"
-						src="/static/img/coin222.png" /><a class="cks">退出</a><img
+						src="/static/img/coin222.png" /><a class="cks" id="logout">退出</a><img
 						class="icon5" src="/static/img/coin21.png" />
 				</dd>
 			</dl>
@@ -123,5 +123,48 @@
 		</div>
 
 	</div>
+<script type="text/javascript">
+    $(function () {
+        $.get('/api/user/permission/', function (result) {
+            if (result.code==200){
+                var per = result.permission.permission;
+                if('超级管理员' != result.permission.role){
+                    if ($.inArray('查看班级', per)<0){
+                        $('#w_grade').remove()
+                    }if($.inArray('添加班级', per)<0){
+                        $('#a_grade').remove()
+                    }if($.inArray('查看学生', per)<0){
+                        $('#w_stu').remove()
+                    }if($.inArray('添加学生', per)<0){
+                        $('#a_stu').remove()
+                    }if($.inArray('查看角色', per)<0){
+                        $('#w_role').remove()
+                    }if($.inArray('添加角色', per)<0){
+                        $('#a_role').remove()
+                    }if($.inArray('查看权限', per)<0){
+                        $('#w_per').remove()
+                    }if($.inArray('添加权限', per)<0){
+                        $('#a_per').remove()
+                    }if($.inArray('查看用户', per)<0){
+                        $('#w_user').remove()
+                    }if($.inArray('添加用户', per)<0){
+                        $('#a_user').remove()
+                    }
+                }
+            }
+        })
+    });
+    $('#logout').on('click', function () {
+        $.ajax({
+            url:'/auth/logout/',
+            type: 'delete',
+            success: function (result) {
+                if (result.code==200){
+                    parent.location.href = '/auth/login/'
+                }
+            }
+        })
+    })
+</script>
 </body>
 </html>

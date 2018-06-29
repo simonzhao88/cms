@@ -6,6 +6,7 @@ from flask_restful import Resource, reqparse
 from App.exts_init import api
 from App.models import User, db
 from utils import status_code
+from utils.login_required import login_required
 from . import auth
 
 
@@ -91,5 +92,13 @@ class RegisterApi(Resource):
         }
 
 
+class LogoutApi(Resource):
+    @login_required
+    def delete(self):
+        session.clear()
+        return status_code.SUCCESS
+
+
 api.add_resource(LoginApi, '/auth/login/')
 api.add_resource(RegisterApi, '/auth/register/')
+api.add_resource(LogoutApi, '/auth/logout/')
